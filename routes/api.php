@@ -11,22 +11,43 @@ use Illuminate\Http\Request;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
- */
+*/
 
-Route::namespace ('Api')->prefix('v1')->group(function () {
+$api = app('Dingo\Api\Routing\Router');
 
-	//用户注册
-	Route::post('/register', 'UserController@register');
-	//用户登录
-	Route::post('/login', 'UserController@login');
-	Route::middleware('api.refresh')->group(function () {
-		//当前用户信息
-		Route::get('/users/info', 'UserController@info')->name('users.info');
-		//用户列表
-		Route::get('/users', 'UserController@index')->name('users.index');
-		//用户信息
-		Route::get('/users/{user}', 'UserController@show')->name('users.show');
-		//用户退出
-		Route::get('/logout', 'UserController@logout')->name('users.logout');
+$api->version('v1', [
+	'namespace' => 'App\Http\Controllers\Api',
+	'middleware' =>['serializer:array', 'bindings']
+], function ($api) {
+	$api->group([
+		'middleware' => 'api.throttle',
+		'limit' => config('api.rate_limits.sign.limit'),
+		'expires' => config('api.rate_limits.sign.expires'),
+	], function ($api) {
+
+		$api->get('test', 'UserController@test');
+
+		// 小程序登录
+		$api->post('weapp/authorizations', 'AuthorizationsController@weappStore');
+		// 小程序注册
+		$api->post('weapp/register', 'UsersController@weappStore');
+
+		// 刷新token
+		$api->put('authorizations/current', 'AuthorizationsController@update');
+		// 删除token
+		$api->delete('authorizations/current', 'AuthorizationsController@destroy');
+
+		//小区信息
+		$api->get('community', 'CommunitiesController@index');
+		//车位信息
+		$api->get('carPark', 'CarParksController@index');
+
+
+
+		//需要token
+		//获取我的信息
+		$api->group(['middleware' => 'api.auth'], function ($api) {
+			$api->get('user', 'UsersController@me');
+		});
 	});
 });

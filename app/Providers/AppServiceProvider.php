@@ -13,7 +13,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
+        \API::error(function (\Illuminate\Auth\Access\AuthorizationException $exception) {
+            abort(403, '没有此权限');
+        });
+        \API::error(function ( \Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
+            abort(404, '该模型未找到');
+        });
+        \API::error(function ( \Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception) {
+            abort(404, '找不到该页面');
+        });
+       
+
+
     }
 
     /**

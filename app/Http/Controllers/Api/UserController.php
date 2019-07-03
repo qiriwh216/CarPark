@@ -3,20 +3,33 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\UserRequest;
-use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\PhoneLoginRequest;
+use App\Transformers\UserTransformer;
 
 class UserController extends Controller
 {
+	public function test(User $user){
+		$query = $user->query();
+		$query->where('');
+		$users  = $query->paginate(3);
+		return $this->response->paginator($users,new UserTransformer());
+	}
 
+	public function test2(){
+		return $this->response->collection(User::all(), new UserTransformer());	
+	}
+
+	public function test3(){
+		return $this->response->item(User::first(), new UserTransformer());
+	}
 	//返回用户列表
 	public function index()
 	{
 		//3个用户为一页
 		$users = User::paginate(3);
-		return UserResource::collection($users);
+
 	}
 	//返回单一用户信息
 	public function show(User $user)
