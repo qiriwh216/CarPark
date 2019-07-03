@@ -6,6 +6,7 @@ use App\Http\Requests\Api\UserRequest;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\Api\PhoneLoginRequest;
 
 class UserController extends Controller
 {
@@ -36,11 +37,29 @@ class UserController extends Controller
 	}
 
 	//用户登录
-	public function login(Request $request)
+	public function login(PhoneLoginRequest $request)
 	{
-		$user = User::first();	
-		$token =  auth('api')->fromUser($user);
-		return $this->success($token);
+		$verifyData = \Cache::get($request->verification_key);
+
+		if (!$verifyData) {
+			return $this->response->error('验证码已失效', 422);
+		}
+
+		if (!hash_equals((string) $verifyData['code'], $request->verification_code)) {
+			return $this->response->errorUnauthorized('验证码错误');
+		}
+
+		$user = User::create([
+			'phone' => $verifyData['phone'],
+		]);
+
+		// 清除验证码缓存
+		\Cache::forget($request->verification_key);
+		return response()->json([
+			'data'=>$user,
+		])->setMeta([ 'access_token' => \Auth::guard('api')->fromUser($user),
+			'token_type' => 'Bearer',
+			'expires_in' => \Auth::guard('api')->factory()->getTTL() * 60])->setStatusCode(201);
 	}
 	
 	//用户退出
