@@ -11,15 +11,8 @@ class User extends Authenticatable implements JWTSubject{
 	use Notifiable;
 	// use Traits\LastActivedAtHelper;
 	protected $table = 'user';
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
-		'name', 'email', 'password','phone',
-	];
-
+	
+	protected $guarded=[];
 	/**
 	 * The attributes that should be hidden for arrays.
 	 *
@@ -49,4 +42,22 @@ class User extends Authenticatable implements JWTSubject{
 	{
 		return [];
 	}
+	
+
+	public function carPark(){
+		return $this->hasOne(CarPark::class);
+	}
+
+	public function orders()
+	{
+		return $this->hasMany(Order::class);
+	}
+
+	public function favoriteCarParks(){
+		return $this->belongsToMany(CarPark::class,'favorite')
+		->withTimestamps()
+		->orderBy('favorite.created_at','desc');
+	}
+
+
 }
