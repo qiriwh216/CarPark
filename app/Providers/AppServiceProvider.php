@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Helpers\ICEService;
 use App\Helpers\MyLog;
 use App\Helpers\NewMicroAuthPrivilege;
-use App\Http\Services\UserService;
+use App\Http\Services\NewMicroService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,9 +26,9 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            'userService',
+            'newMicroService',
             function () {
-                return  new UserService(ICEService::getInstance(), NewMicroAuthPrivilege::getInstance());
+                return  new NewMicroService(ICEService::getInstance(), NewMicroAuthPrivilege::getInstance());
             }
         );
 

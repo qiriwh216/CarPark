@@ -5,13 +5,8 @@ use App\Helpers\NewMicroAuthPrivilege;
 use App\Helpers\ICEService;
 
 
-class UserService extends BaseService
+class NewMicroService extends BaseService
 {
-    protected $userInfo;
-
-    protected $customer = [];
-
-    protected $yunUserInfo = [];
 
     /**
      * @var ICEService
@@ -23,11 +18,8 @@ class UserService extends BaseService
      */
     protected $newMicroAuthPrivilege;
 
-    const USER_INFO_CACHE_KEY = 'user:info:access_token:';
-    const YUN_INFO_CACHE_KEY = 'yun:info:access_token:';
-
     /**
-     * UserService constructor.
+     * NewMicroService constructor.
      * @param $iceService
      */
     public function __construct(ICEService $iceService, NewMicroAuthPrivilege $newMicroAuthPrivilege)
