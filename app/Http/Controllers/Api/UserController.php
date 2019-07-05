@@ -172,28 +172,4 @@ class UserController extends Controller
 	}
 
 
-    /*
-    * 彩车位
-    */
-    public function ccwOauth2Redirect()
-    {
-        $query = http_build_query([
-            'application_id' => env('ICE_APP_ID'),
-            'redirect_uri' => urlencode(env('WEB_SERVER').'/api/v1/oauth2/callback'),
-            'response_type' => 'access_token',
-            'scope' => 'SCOPE',
-            'state' => 'STATE',
-        ]);
-
-        $url = sprintf('%s/oauth2/authorize?%s', env('OAUTH2_URL'), $query);
-
-        return redirect($url);
-    }
-
-//    public function ccwOauth2Callback(Request $request)
-//    {
-//        $url = sprintf(env('WEB_URL') . '/home_cw.html?access_token=%s', $request->input('access_token'));
-//
-//        return redirect($url);
-//    }
 }
