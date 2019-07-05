@@ -96,6 +96,49 @@ class NewMicroService extends BaseService
         return $result;
     }
 
+    /**
+     * 调用ICE微服务短信接口
+     * @param $mobile
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getSMSCode($mobile)
+    {
+        $result = $this->iceService->dispatch(
+            'czyprovide/verification/getCode',
+            [
+                'mobile' => $mobile,
+                'template' => '彩车位提醒您，您的验证码是{code},请妥善保管！',
+            ],
+            [],
+            'POST'
+        );
+
+        return $result;
+    }
+
+    /**
+     * 验证ICE短信验证码是否正确
+     * @param $mobile
+     * @param $code
+     * @return mixed
+     * @throws \Exception
+     */
+    public function checkSMSCode($mobile, $code)
+    {
+        $result = $this->iceService->dispatch(
+            'czyprovide/verification/checkCode',
+            [
+                'mobile' => $mobile,
+                'code' => $code,
+            ],
+            [],
+            'PUT'
+        );
+
+        return $result;
+    }
+
 
 
 }
